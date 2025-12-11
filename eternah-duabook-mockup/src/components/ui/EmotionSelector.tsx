@@ -1,4 +1,4 @@
-import { Chip, Stack, Typography, Box } from '@mui/material';
+import { Chip, Stack, Typography, Box, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 
 // The list of feelings (inspired by Life With Allah)
@@ -18,6 +18,8 @@ interface EmotionSelectorProps {
 }
 
 export const EmotionSelector = ({ selected, onSelect }: EmotionSelectorProps) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
     return (
         <Box sx={{ py: 2 }}>
             <Typography
@@ -67,12 +69,14 @@ export const EmotionSelector = ({ selected, onSelect }: EmotionSelectorProps) =>
                                 borderRadius: 50,
                                 transition: 'all 0.2s ease',
                                 // Active State Styling
-                                bgcolor: selected === emotion.id ? 'primary.main' : 'white',
-                                color: selected === emotion.id ? 'white' : 'text.primary',
+                                bgcolor: selected === emotion.id
+                                    ? 'primary.main'
+                                    : (isDark ? '#F0EEEA' : 'white'), // use light chip bg in dark mode so label can be darker
+                                color: selected === emotion.id ? 'white' : (isDark ? '#111827' : 'text.primary'),
                                 border: '1px solid',
-                                borderColor: selected === emotion.id ? 'primary.main' : '#E5E7EB',
+                                borderColor: selected === emotion.id ? 'primary.main' : (isDark ? '#E5E7EB' : '#E5E7EB'),
                                 '&:hover': {
-                                    bgcolor: selected === emotion.id ? 'primary.dark' : '#F3F4F6',
+                                    bgcolor: selected === emotion.id ? 'primary.dark' : (isDark ? '#e9e6e2' : '#F3F4F6'),
                                 },
                                 // ensure chips don't shrink or wrap internally
                                 flex: '0 0 auto',

@@ -1,11 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Box, Typography, IconButton, Stack, Divider, LinearProgress } from '@mui/material';
-import { motion } from 'framer-motion'; // Animation wrapper
+import { Box, Typography, IconButton, Stack, Divider, LinearProgress, Avatar } from '@mui/material';
+import { motion } from 'framer-motion';
+// Actions
 import PlayArrowRoundedIcon from '@mui/icons-material/PlayArrowRounded';
 import PauseRoundedIcon from '@mui/icons-material/PauseRounded';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import IosShareRoundedIcon from '@mui/icons-material/IosShareRounded';
-import type { Dua } from '../../types';
+// Visual Icons
+import WbSunnyRoundedIcon from '@mui/icons-material/WbSunnyRounded';
+import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded';
+import CloudQueueRoundedIcon from '@mui/icons-material/CloudQueueRounded';
+import MosqueRoundedIcon from '@mui/icons-material/MosqueRounded';
+import VolunteerActivismRoundedIcon from '@mui/icons-material/VolunteerActivismRounded'; // Heart in hand
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+
+import type { Dua } from '../../types'; // Adjust path to your types/index.ts
 
 interface DuaCardProps {
     dua: Dua;
@@ -16,16 +25,29 @@ interface DuaCardProps {
     isActive?: boolean;
 }
 
+// Helper to render the specific icon based on the mock data
+const getIllustration = (type?: string) => {
+    const iconStyle = { fontSize: 40, color: '#C5A059' }; // Eternah Gold
+    switch (type) {
+        case 'heart': return <VolunteerActivismRoundedIcon sx={iconStyle} />;
+        case 'sun': return <WbSunnyRoundedIcon sx={iconStyle} />;
+        case 'moon': return <DarkModeRoundedIcon sx={iconStyle} />;
+        case 'cloud': return <CloudQueueRoundedIcon sx={iconStyle} />;
+        case 'book': return <MenuBookRoundedIcon sx={iconStyle} />;
+        default: return <MosqueRoundedIcon sx={iconStyle} />;
+    }
+};
+
 export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavorite, onShare, isActive = false }) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [progress, setProgress] = useState<number>(0); // 0-100 for simulated progress
+    const [progress, setProgress] = useState<number>(0);
     const simIntervalRef = useRef<number | null>(null);
     const simElapsedRef = useRef<number>(0);
-    const SIM_DURATION = 8000; // ms for full simulated playback
-    const simulate = !dua.audioUrl; // simulate when no real audio URL
+    const SIM_DURATION = 8000;
+    const simulate = !dua.audioUrl;
 
-    // If the dua has no audio, audioRef.current will be null and play is disabled
+    // --- Audio Logic ---
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
@@ -48,19 +70,16 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
             audio.removeEventListener('pause', handlePause);
             audio.removeEventListener('play', handlePlay);
         };
-    }, [dua.audioUrl, onPause]);
+    }, [dua.audioUrl, onPause, dua.id]);
 
-    // Simulation helpers
     const startSimulation = () => {
         if (simIntervalRef.current) return;
-        // resume from simElapsedRef (ms)
-        const tick = 100; // ms
+        const tick = 100;
         simIntervalRef.current = window.setInterval(() => {
             simElapsedRef.current += tick;
             const pct = Math.min(100, (simElapsedRef.current / SIM_DURATION) * 100);
             setProgress(pct);
             if (pct >= 100) {
-                // finished
                 if (simIntervalRef.current) {
                     clearInterval(simIntervalRef.current);
                     simIntervalRef.current = null;
@@ -84,7 +103,6 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
         onPause?.(dua.id);
     };
 
-    // cleanup simulation on unmount
     useEffect(() => {
         return () => {
             if (simIntervalRef.current) {
@@ -94,12 +112,10 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
         };
     }, []);
 
-    // When parent tells us we are no longer the active player, pause local audio
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) {
             if (!isActive && simulate && isPlaying) {
-                // pause simulation if parent deactivated
                 pauseSimulation();
             }
             return;
@@ -108,12 +124,11 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
             audio.pause();
             setIsPlaying(false);
         }
-    }, [isActive]);
+    }, [isActive, simulate, isPlaying]);
 
     const togglePlay = () => {
         const audio = audioRef.current;
         if (simulate) {
-            // Toggle simulated playback
             if (isPlaying) {
                 pauseSimulation();
             } else {
@@ -126,10 +141,8 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
 
         if (isPlaying) {
             audio.pause();
-            // audio 'pause' event handler will call onPause
         } else {
             audio.play().catch(() => {
-                // playback might fail (autoplay restrictions); just set state conservatively
                 setIsPlaying(false);
             });
             setIsPlaying(true);
@@ -137,13 +150,8 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
         }
     };
 
-    const handleFavorite = () => {
-        onFavorite?.(dua.id);
-    };
-
-    const handleShare = () => {
-        onShare?.(dua.id);
-    };
+    const handleFavorite = () => onFavorite?.(dua.id);
+    const handleShare = () => onShare?.(dua.id);
 
     return (
         <motion.div
@@ -155,17 +163,47 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
         >
             <Box sx={{
                 bgcolor: 'background.paper',
-                p: 0, // Padding handled inside to allow full-width footer
+                p: 0,
                 borderRadius: 3,
                 boxShadow: 1,
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',
-                mb: 3 // Spacing between cards when listing
+                mb: 3
             }}>
 
+                {/* --- VISUAL HEADER (The Organic "Instagram" Feel) --- */}
+                <Box sx={{
+                    pt: 4,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <Box sx={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        bgcolor: '#F9FAFB', // Very light grey circle
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid',
+                        borderColor: '#F3F4F6'
+                    }}>
+                        {/* If url exists, show Avatar. Else show vector icon. */}
+                        {dua.illustration ? (
+                            <Avatar
+                                src={dua.illustration}
+                                sx={{ width: 80, height: 80 }}
+                            />
+                        ) : (
+                            getIllustration(dua.iconType)
+                        )}
+                    </Box>
+                </Box>
+
                 {/* Card Content */}
-                <Box sx={{ p: { xs: 2, sm: 4 } }}>
+                <Box sx={{ p: { xs: 2, sm: 4 }, pt: 2 }}>
                     <Typography
                         variant="overline"
                         color="secondary"
@@ -179,12 +217,16 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
                         {dua.category}
                     </Typography>
 
-                    {/* Arabic - wrapped to avoid overflow */}
-                    <Typography variant="h5" sx={{ my: 2, fontSize: { xs: '1.1rem', sm: '1.5rem' } }} className="wrap-break">
+                    {/* Arabic */}
+                    <Typography
+                        variant="h5"
+                        sx={{ my: 2, fontSize: { xs: '1.5rem', sm: '1.8rem' }, lineHeight: 2 }}
+                        className="wrap-break"
+                    >
                         {dua.arabic}
                     </Typography>
 
-                    {/* Transliteration (Italicized for distinction) */}
+                    {/* Transliteration */}
                     {dua.transliteration && (
                         <Typography
                             variant="body2"
@@ -200,7 +242,7 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
                     )}
 
                     {/* Translation */}
-                    <Typography variant="body1" sx={{ fontWeight: 500 }} className="wrap-break">
+                    <Typography variant="body1" sx={{ fontWeight: 500, mt: 2 }} className="wrap-break">
                         {dua.translation}
                     </Typography>
 
@@ -212,46 +254,52 @@ export const DuaCard: React.FC<DuaCardProps> = ({ dua, onPlay, onPause, onFavori
                     )}
                 </Box>
 
-                {/* Hidden audio element (controlled by play button) */}
+                {/* Hidden Audio Element */}
                 {dua.audioUrl && (
                     <audio ref={audioRef} src={dua.audioUrl} preload="none" />
                 )}
 
                 {/* Action Bar */}
                 <Divider sx={{ opacity: 0.6 }} />
+
+                {/* Progress Bar (Sitting on top of the divider) */}
+                {(isPlaying || progress > 0) && (
+                    <LinearProgress
+                        variant="determinate"
+                        value={progress}
+                        color="secondary"
+                        sx={{ height: 3, bgcolor: 'transparent' }}
+                    />
+                )}
+
                 <Stack
                     direction="row"
                     justifyContent="space-between"
                     alignItems="center"
                     sx={{ px: 2, py: 1.5, bgcolor: 'background.default' }}
                 >
-                    {/* Play/Pause Button - disabled if no audio */}
                     <IconButton
-                        aria-label={simulate ? (isPlaying ? 'Pause simulated audio' : 'Play simulated audio') : (isPlaying ? 'Pause audio' : 'Play audio')}
                         onClick={togglePlay}
-                        // if simulating, enable button; otherwise only enable when audio exists
-                        disabled={false}
-                        sx={{ color: 'secondary.main', border: '1px solid', borderColor: 'secondary.main' }}
+                        sx={{
+                            color: 'secondary.main',
+                            border: '1px solid',
+                            borderColor: 'secondary.main',
+                            width: 40,
+                            height: 40
+                        }}
                     >
                         {isPlaying ? <PauseRoundedIcon /> : <PlayArrowRoundedIcon />}
                     </IconButton>
 
-                    {/* Secondary Actions */}
                     <Stack direction="row" spacing={1}>
-                        <IconButton aria-label="favorite dua" onClick={handleFavorite}>
+                        <IconButton onClick={handleFavorite}>
                             <FavoriteBorderRoundedIcon />
                         </IconButton>
-                        <IconButton aria-label="share dua" onClick={handleShare}>
+                        <IconButton onClick={handleShare}>
                             <IosShareRoundedIcon />
                         </IconButton>
                     </Stack>
                 </Stack>
-
-                {/* Progress bar (shows during simulated playback or real playback when active) */}
-                {(isPlaying || progress > 0) && (
-                    <LinearProgress variant="determinate" value={progress} sx={{ height: 4 }} />
-                )}
-
             </Box>
         </motion.div>
     );
