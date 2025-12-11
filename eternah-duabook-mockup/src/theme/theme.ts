@@ -5,7 +5,7 @@ import { createTheme, responsiveFontSizes } from '@mui/material/styles';
 const colors = {
   primary: '#1F2937',    // Deep Charcoal/Navy (Authoritative, readable)
   secondary: '#C5A059',  // Muted Gold (Elegant, not flashy)
-  background: '#FDFBF7', // "Warm Paper" (Easier on eyes than #FFFFFF)
+  background: '#F0EEEA', // "Warm Paper" (Easier on eyes than #FFFFFF)
   paper: '#FFFFFF',      // Pure white for cards to pop against the cream background
   textMain: '#111827',   // Almost black
   textMuted: '#6B7280',  // Grey for translations
