@@ -5,6 +5,6 @@
     "eternah-duabook-mockup"
   ],
   "scripts": {
-    "build": "npm --workspace=eternah-duabook-mockup run build && rm -rf dist && mkdir -p dist && cp -R eternah-duabook-mockup/dist/* dist/"
+    "build": "npm --prefix eternah-duabook-mockup run build && rm -rf dist && mkdir -p dist && cp -R eternah-duabook-mockup/dist/* dist/"
   }
 }
