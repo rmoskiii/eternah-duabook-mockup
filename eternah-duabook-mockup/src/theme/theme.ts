@@ -31,12 +31,13 @@ export function createAppTheme(mode: 'light' | 'dark') {
       h1: {
         fontFamily: 'Playfair Display, serif',
         fontWeight: 700,
-        color: baseColors.primary,
+        // Use the palette text color so headings remain readable in dark mode
+        color: palette.text.primary,
       },
       h2: {
         fontFamily: 'Playfair Display, serif',
         fontWeight: 600,
-        color: baseColors.primary,
+        color: palette.text.primary,
         fontSize: '2.5rem',
       },
       h3: {
@@ -93,7 +94,8 @@ export function createAppTheme(mode: 'light' | 'dark') {
         fontSize: '2rem',
         lineHeight: 2.4,
         direction: 'rtl',
-        color: baseColors.primary,
+        // ensure h4 (used for some headings) follows the palette text color
+        color: theme.palette.text.primary,
       },
     },
   });
