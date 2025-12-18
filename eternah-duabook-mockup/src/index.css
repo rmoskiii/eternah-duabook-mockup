@@ -1,0 +1,121 @@
+/* Add global box-sizing to make sizing predictable */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure the page doesn't auto-zoom on mobile by locking text-size adjustments */
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  -webkit-text-size-adjust: 100%; /* prevent iOS Safari from enlarging text */
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  /* Eternah light background */
+  background-color: #F0EEEA;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* Make the body center the app horizontally while allowing vertical scroll
+   and add safe padding so elements don't touch screen edges on mobile */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center; /* center main container horizontally */
+  align-items: flex-start;  /* start at the top so header isn't vertically centered */
+  /* Use safe-area insets for devices with notches; fall back to 1rem */
+  padding: env(safe-area-inset-top, 1rem) env(safe-area-inset-right, 1rem) env(safe-area-inset-bottom, 1rem) env(safe-area-inset-left, 1rem);
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: inherit;
+  color: inherit;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* prevent images, svgs, videos, and other media from overflowing their container */
+img, svg, video, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Utility to ensure long words (like Arabic) wrap instead of overflowing */
+.wrap-break {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* Prevent the page from ever creating a horizontal scrollbar due to off-by-one widths */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Ensure the React root is centered within the body flex container */
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Prevent iOS Safari from auto-zooming focused inputs by ensuring readable font-size */
+input, textarea, select, button {
+  font-size: 16px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #F0EEEA;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
