@@ -1,0 +1,10 @@
+{
+  "name": "eternah-duabook-monorepo",
+  "private": true,
+  "workspaces": [
+    "eternah-duabook-mockup"
+  ],
+  "scripts": {
+    "build": "npm --workspace=eternah-duabook-mockup run build && rm -rf dist && mkdir -p dist && cp -R eternah-duabook-mockup/dist/* dist/"
+  }
+}

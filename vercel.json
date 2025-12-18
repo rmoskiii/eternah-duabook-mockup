@@ -1,16 +1,6 @@
 {
   "version": 2,
-  "installCommand": "npm --prefix eternah-duabook-mockup install",
-  "buildCommand": "npm --prefix eternah-duabook-mockup run build",
-  "builds": [
-    {
-      "src": "eternah-duabook-mockup/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "eternah-duabook-mockup/dist" }
-    }
-  ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
